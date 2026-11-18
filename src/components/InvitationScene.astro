@@ -1,0 +1,142 @@
+---
+/** Scene 6 — the invitation: a handwritten card writes itself with the visitor's feeling. */
+import { home, feelings, business } from '../content/site';
+import Edge from './Edge.astro';
+
+const first = feelings[0];
+const wa = `https://wa.me/${business.contact.whatsappNumber}?text=${encodeURIComponent(`Hello Petal & Stem! I’d like to order a ${first.phrase} bouquet for delivery today in [Kandy]. Could you help me?`)}`;
+---
+
+<section class="invite on-dark" data-scene="invitation" id="order-today" aria-labelledby="invite-title">
+  <Edge fill="rose-deep" seed={11} />
+  <div class="wrap invite-grid">
+    <div class="inv-text">
+      <h2 id="invite-title" class="inv-h">{home.invitation.headline}</h2>
+      <p class="inv-line">{home.invitation.line}</p>
+    </div>
+
+    <div class="card-area">
+      <div class="envelope" aria-hidden="true"></div>
+      <div class="card" data-card>
+        <p class="hand card-greet" data-card-line>{home.invitation.cardGreeting}</p>
+        <p class="hand card-msg" data-card-msg aria-live="polite">{first.cardMessage}</p>
+        <p class="hand card-sign" data-card-line>{home.invitation.cardSign}</p>
+        <svg class="card-sprig" viewBox="0 0 80 60" aria-hidden="true">
+          <path d="M6 54C26 44 44 30 74 6" stroke="var(--color-stem)" stroke-width="2" fill="none" />
+          <path d="M30 40C26 30 30 22 38 18C40 28 36 36 30 40Z" fill="var(--color-leaf)" />
+          <path d="M46 28C50 20 58 16 66 18C62 26 54 30 46 28Z" fill="var(--color-leaf-light)" />
+          <circle cx="74" cy="6" r="5" fill="var(--color-petal)" />
+        </svg>
+      </div>
+      <p class="card-caption">Your note, written by hand on every bouquet.</p>
+    </div>
+
+    <div class="inv-actions">
+      <p class="inv-label" id="inv-feel-label">What do you want to say?</p>
+      <div class="chips" role="group" aria-labelledby="inv-feel-label">
+        {feelings.map((f, i) => (
+          <button type="button" class="chip-btn" data-inv-feeling={f.id} aria-pressed={i === 0 ? 'true' : 'false'}>{f.label}</button>
+        ))}
+      </div>
+      <div class="inv-cta">
+        <a class="btn btn-cream big" data-wa-order href={wa} target="_blank" rel="noopener">
+          <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.1l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3a.5.5 0 0 0 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.8 11.9 11.9 0 0 0 4.6 4c1.7.7 2.4.8 3.2.7a2.8 2.8 0 0 0 1.8-1.3 2.3 2.3 0 0 0 .2-1.3c-.1-.1-.3-.2-.5-.3Z" /></svg>
+          Order for today
+        </a>
+        <a class="btn btn-line" data-order-link href={`/order?feeling=${first.id}`}>Order online</a>
+      </div>
+      <p class="inv-small">
+        Prefer to talk? <a href={business.contact.phoneHref}>{business.contact.phoneDisplay}</a> · <a href={business.contact.emailHref}>{business.contact.email}</a>
+      </p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .invite {
+    position: relative;
+    z-index: 3;
+    background: var(--color-rose-deep);
+    color: var(--color-cream);
+    padding-block: clamp(4.5rem, 9vw, 8rem) clamp(6rem, 10vw, 9rem);
+  }
+  .invite-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-areas: 'text card' 'actions card';
+    column-gap: clamp(2rem, 6vw, 6rem);
+    row-gap: 2rem;
+    align-items: start;
+  }
+  .inv-text { grid-area: text; }
+  .inv-h { font-size: var(--text-display); line-height: var(--text-display--line-height); color: var(--color-cream); font-weight: 340; }
+  .inv-line { margin-top: 1.2rem; font-size: var(--text-lead); color: var(--color-blush); max-width: 30rem; }
+  .inv-actions { grid-area: actions; }
+  .inv-label { font-family: var(--font-hand); font-size: 1.5rem; color: var(--color-gold-soft); }
+  .chips { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem; }
+  .chip-btn {
+    min-height: 44px;
+    padding: 0.5rem 1rem;
+    border-radius: 999px;
+    border: 1.5px solid rgb(248 241 229 / 0.4);
+    background: transparent;
+    color: var(--color-cream);
+    cursor: pointer;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 1.05rem;
+    transition: background-color 0.25s, color 0.25s, border-color 0.25s;
+  }
+  .chip-btn:hover { border-color: var(--color-cream); }
+  .chip-btn[aria-pressed='true'] { background: var(--color-cream); color: var(--color-rose-deep); border-color: var(--color-cream); }
+  .inv-cta { margin-top: 1.6rem; display: flex; flex-wrap: wrap; gap: 0.8rem; }
+  .btn.big { min-height: 56px; padding-inline: 1.8rem; font-size: 1.05rem; }
+  .inv-small { margin-top: 1.4rem; font-size: 0.92rem; color: var(--color-blush); }
+  .inv-small a { color: var(--color-cream); text-underline-offset: 3px; display: inline-block; padding-block: 0.6rem; }
+
+  .card-area { grid-area: card; position: relative; padding: 2rem 0 0; }
+  .envelope {
+    position: absolute;
+    inset: 0 6% 12% 10%;
+    background: linear-gradient(160deg, var(--color-kraft), var(--color-wood-light));
+    border-radius: 6px;
+    rotate: -6deg;
+    box-shadow: var(--shadow-lift);
+  }
+  .envelope::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom right, transparent 49.5%, rgb(94 58 35 / 0.25) 50%, transparent 51%),
+      linear-gradient(to bottom left, transparent 49.5%, rgb(94 58 35 / 0.25) 50%, transparent 51%);
+    background-size: 100% 60%;
+    background-repeat: no-repeat;
+  }
+  .card {
+    position: relative;
+    min-height: clamp(300px, 34vw, 430px);
+    padding: clamp(1.6rem, 3.4vw, 3rem);
+    background: var(--color-ivory);
+    color: var(--color-ink);
+    border-radius: 4px;
+    rotate: 2.5deg;
+    box-shadow: var(--shadow-lift);
+    background-image: radial-gradient(120% 90% at 0% 0%, rgb(255 255 255 / 0.7), transparent 60%);
+  }
+  .card-greet { font-size: clamp(1.7rem, 2.6vw, 2.3rem); color: var(--color-ink-soft); }
+  .card-msg { margin-top: 0.9rem; font-size: clamp(2rem, 3.6vw, 3.2rem); line-height: 1.12; color: var(--color-rose-deep); min-height: 3.4em; }
+  .card-sign { margin-top: 1.2rem; font-size: clamp(1.6rem, 2.4vw, 2.1rem); text-align: right; color: var(--color-ink-soft); }
+  .card-sprig { position: absolute; left: 1.2rem; bottom: 1rem; width: 72px; }
+  .card-caption { margin-top: 1.6rem; font-size: 0.9rem; color: var(--color-blush); text-align: right; position: relative; }
+  .card-msg :global(.w) { display: inline-block; white-space: pre; }
+
+  @media (max-width: 860px) {
+    .invite-grid { grid-template-columns: 1fr; grid-template-areas: 'text' 'card' 'actions'; }
+    .inv-h { font-size: clamp(2.6rem, 11vw, 3.6rem); }
+    .card-area { padding: 1rem 0.4rem 0; }
+    .card { min-height: 0; }
+    .card-msg { min-height: 0; }
+    .btn.big { width: 100%; }
+    .inv-cta .btn-line { width: 100%; }
+  }
+</style>

@@ -1,0 +1,585 @@
+---
+/**
+ * Scenes 1 + 2 — the hook and the turn, one pinned depth scene.
+ * Layers (back → front): wall + arched window · shelves of flowers · workbench
+ * · floating words · vase + bouquets · petals + ribbon · text.
+ */
+import { home, feelings, heroFeelings, floatingWords } from '../content/site';
+import { bouquetMarkup, flowerDefs, vaseBack, vaseFront } from '../lib/flowers';
+import { shelvesMarkup, ribbonMarkup, petalSvg } from '../lib/shop';
+
+const picker = heroFeelings.map((id) => feelings.find((f) => f.id === id)!);
+const shelves = shelvesMarkup();
+const ribbon = ribbonMarkup();
+
+// Word positions: desktop (x,y) and phone (x,y) in % of the stage, plus depth.
+const wordPos = [
+  { d: [52, 25], m: [22, 44], size: 1.15, depth: 0.7 },
+  { d: [83, 17], m: [74, 41], size: 1.0, depth: 0.5 },
+  { d: [72, 37], m: [44, 51], size: 1.35, depth: 1 },
+  { d: [91, 47], m: [78, 57], size: 0.95, depth: 0.6 },
+  { d: [50, 50], m: [24, 61], size: 0.9, depth: 0.45 },
+];
+
+const petals = [
+  { x: 6, y: 84, s: 1.25, r: -30, blur: 2, c: ['blush', 'petal'], dx: -6, dy: -120 },
+  { x: 93, y: 72, s: 1.6, r: 40, blur: 3, c: ['peach', 'peach-deep'], dx: 8, dy: -130 },
+  { x: 40, y: 94, s: 0.9, r: 10, blur: 0, c: ['blush', 'petal'], dx: -12, dy: -140 },
+  { x: 86, y: 8, s: 0.8, r: -60, blur: 0, c: ['ivory', 'blush-deep'], dx: 10, dy: -60 },
+  { x: 58, y: 108, s: 1.9, r: 70, blur: 3, c: ['petal', 'rose'], dx: -20, dy: -160 },
+  { x: 20, y: 112, s: 1.1, r: -15, blur: 1, c: ['blush', 'petal'], dx: 14, dy: -150 },
+];
+---
+
+<section class="hero" data-scene="hero" aria-labelledby="hero-title">
+  <div class="hero-stage">
+    <div class="hero-sink">
+      <!-- BACKGROUND: blush wall with soft light from an arched window -->
+      <div class="layer l-bg" data-depth="6" aria-hidden="true">
+        <div class="depth-inner">
+          <div class="wall"></div>
+          <div class="window">
+            <svg viewBox="0 0 300 470" preserveAspectRatio="xMidYMax meet">
+              <defs>
+                <linearGradient id="win-sky" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stop-color="var(--color-ivory)" />
+                  <stop offset="0.65" stop-color="var(--color-cream)" />
+                  <stop offset="1" stop-color="var(--color-blush-50)" />
+                </linearGradient>
+                <filter id="win-soft" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="9" /></filter>
+                <clipPath id="win-glass"><path d="M40 455V170A110 110 0 0 1 260 170V455Z" /></clipPath>
+              </defs>
+              <!-- reveal (wall thickness) -->
+              <path d="M22 470V168A128 128 0 0 1 278 168V470Z" fill="var(--color-blush-deep)" />
+              <path d="M22 470V168A128 128 0 0 1 150 40V58A110 110 0 0 0 40 170V470Z" fill="var(--color-petal)" opacity="0.18" />
+              <!-- glass + garden outside, softly out of focus -->
+              <g clip-path="url(#win-glass)">
+                <rect x="0" y="0" width="300" height="470" fill="url(#win-sky)" />
+                <g filter="url(#win-soft)" opacity="0.55">
+                  <ellipse cx="60" cy="400" rx="80" ry="70" fill="var(--color-sage)" />
+                  <ellipse cx="250" cy="380" rx="90" ry="90" fill="var(--color-leaf-light)" />
+                  <ellipse cx="150" cy="450" rx="120" ry="50" fill="var(--color-sage)" />
+                  <ellipse cx="230" cy="250" rx="40" ry="60" fill="var(--color-sage)" opacity="0.6" />
+                </g>
+              </g>
+              <!-- frame + muntins -->
+              <g fill="none" stroke="var(--color-ivory)" stroke-linecap="round">
+                <path d="M40 455V170A110 110 0 0 1 260 170V455Z" stroke-width="10" />
+                <path d="M150 62V455M40 300H260M40 190H260" stroke-width="5" />
+                <path d="M150 190L72 92M150 190L228 92" stroke-width="4" />
+              </g>
+              <!-- sill -->
+              <rect x="16" y="452" width="268" height="14" rx="3" fill="var(--color-ivory)" />
+              <rect x="16" y="463" width="268" height="7" fill="var(--color-blush-deep)" />
+            </svg>
+          </div>
+          <div class="beam" aria-hidden="true"></div>
+        </div>
+      </div>
+
+      <!-- FAR: shelves and buckets of flowers, softly out of focus -->
+      <div class="layer l-far" data-depth="12" aria-hidden="true">
+        <div class="depth-inner">
+          <svg class="shelves" viewBox="0 0 1600 420" preserveAspectRatio="xMidYMax slice" overflow="visible">
+            <defs><filter id="far-blur" x="-5%" y="-60%" width="110%" height="180%"><feGaussianBlur stdDeviation="3.6" /></filter></defs>
+            <g filter="url(#far-blur)" set:html={shelves} />
+          </svg>
+          <div class="veil"></div>
+        </div>
+      </div>
+
+      <!-- MIDDLE: the florist's wooden workbench -->
+      <div class="layer l-mid" data-depth="18" aria-hidden="true">
+        <div class="depth-inner">
+          <div class="bench">
+            <svg viewBox="0 0 1600 600" preserveAspectRatio="none">
+              <defs>
+                <linearGradient id="bench-top" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stop-color="var(--color-wood-deep)" />
+                  <stop offset="0.12" stop-color="var(--color-wood)" />
+                  <stop offset="1" stop-color="var(--color-wood-light)" />
+                </linearGradient>
+              </defs>
+              <rect width="1600" height="600" fill="url(#bench-top)" />
+              <g fill="none" stroke="var(--color-wood-deep)" stroke-opacity="0.22" stroke-width="1.4">
+                <path d="M0 38C300 30 520 48 820 40S1300 30 1600 42" />
+                <path d="M0 70C260 62 600 82 900 72S1350 64 1600 76" />
+                <path d="M0 150C320 138 620 162 960 150S1380 140 1600 154" />
+                <path d="M0 196C280 186 700 210 1000 196S1400 186 1600 200" />
+                <path d="M0 330C340 316 640 346 980 330S1400 318 1600 334" />
+                <path d="M0 400C300 386 720 418 1040 400S1420 390 1600 404" />
+                <path d="M0 520C360 504 700 540 1060 520S1440 508 1600 524" />
+              </g>
+              <g stroke="var(--color-wood-deep)" stroke-opacity="0.45" stroke-width="2">
+                <path d="M0 108H1600" /><path d="M0 262H1600" /><path d="M0 460H1600" />
+              </g>
+              <rect width="1600" height="4" fill="var(--color-wood-light)" opacity="0.7" />
+            </svg>
+            <div class="bench-light"></div>
+          </div>
+          <div class="bench-items">
+            <!-- twine spool -->
+            <svg class="spool" viewBox="0 0 120 110">
+              <ellipse cx="60" cy="98" rx="52" ry="9" fill="var(--color-shade)" opacity="0.25" />
+              <rect x="22" y="22" width="76" height="72" fill="var(--color-kraft)" />
+              <g stroke="var(--color-wood)" stroke-opacity="0.5" stroke-width="1.5">
+                <path d="M22 32H98M22 42H98M22 52H98M22 62H98M22 72H98M22 82H98" />
+              </g>
+              <rect x="22" y="22" width="20" height="72" fill="var(--color-ivory)" opacity="0.18" />
+              <ellipse cx="60" cy="22" rx="44" ry="9" fill="var(--color-wood-light)" />
+              <ellipse cx="60" cy="22" rx="10" ry="2.5" fill="var(--color-wood-deep)" />
+              <path d="M16 94H104V96A44 9 0 0 1 16 96Z" fill="var(--color-wood)" />
+              <path d="M98 60C110 70 104 92 86 100S50 104 30 104" fill="none" stroke="var(--color-kraft)" stroke-width="2" />
+            </svg>
+            <!-- florist's scissors -->
+            <svg class="scissors" viewBox="0 0 160 70">
+              <ellipse cx="80" cy="56" rx="70" ry="7" fill="var(--color-shade)" opacity="0.18" />
+              <path d="M60 34L150 18L152 22L64 40Z" fill="var(--color-ivory)" opacity="0.92" />
+              <path d="M60 36L150 46L148 50L62 42Z" fill="var(--color-paper)" />
+              <path d="M24 22C10 22 6 38 16 44S44 46 50 36C54 28 38 22 24 22ZM26 29C34 29 42 32 40 36S28 40 22 38S18 29 26 29Z" fill="var(--color-rose-deep)" fill-rule="evenodd" />
+              <path d="M28 50C14 52 12 64 24 66S50 62 52 54C54 46 42 48 28 50ZM30 55C38 54 44 55 42 58S32 61 28 61S22 56 30 55Z" fill="var(--color-rose-deep)" fill-rule="evenodd" />
+              <circle cx="62" cy="38" r="3" fill="var(--color-gold)" />
+            </svg>
+            <!-- trimmed leaves left on the bench -->
+            <svg class="cuttings" viewBox="0 0 160 60">
+              <path d="M10 44C40 30 70 34 92 42C70 50 40 52 10 44Z" fill="var(--color-leaf)" />
+              <path d="M10 44L92 42" stroke="var(--color-stem-deep)" stroke-opacity="0.4" />
+              <path d="M70 28C92 14 120 14 140 22C122 34 96 36 70 28Z" fill="var(--color-leaf-light)" />
+              <path d="M96 52H152" stroke="var(--color-stem)" stroke-width="4" stroke-linecap="round" />
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- WORDS floating in the air -->
+      <div class="layer l-words" data-depth="22" aria-hidden="true">
+        <div class="depth-inner">
+          {floatingWords.map((w, i) => (
+            <span
+              class="word"
+              style={`--x:${wordPos[i].d[0]}%;--y:${wordPos[i].d[1]}%;--xm:${wordPos[i].m[0]}%;--ym:${wordPos[i].m[1]}%;--s:${wordPos[i].size};--o:${0.55 + wordPos[i].depth * 0.45}`}
+            >
+              <span class="word-float"><span class="word-text">{w}</span></span>
+            </span>
+          ))}
+        </div>
+      </div>
+
+      <!-- NEAR: the vase, and the bouquet growing in it -->
+      <div class="layer l-near" data-depth="28" aria-hidden="true">
+        <div class="depth-inner">
+          <div class="vase-wrap">
+            <div class="vase-shadow"></div>
+            <div class="vase-caustic"></div>
+            <svg class="vase-svg" viewBox="0 0 600 900">
+              <defs set:html={flowerDefs} />
+              <g set:html={vaseBack} />
+              {picker.map((f, i) => (
+                <g class="bq" data-bq={f.id} visibility={i === 0 ? 'visible' : 'hidden'} set:html={bouquetMarkup(f.id)} />
+              ))}
+              <g set:html={vaseFront} />
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- FOREGROUND: petals and a loose ribbon passing the viewer -->
+      <div class="layer l-fg" data-depth="44" aria-hidden="true">
+        <div class="depth-inner">
+          <svg class="ribbon" viewBox="0 0 300 1000">
+            <defs><filter id="rib-blur"><feGaussianBlur stdDeviation="1.6" /></filter></defs>
+            <g filter="url(#rib-blur)" set:html={ribbon} />
+          </svg>
+          {petals.map((p, i) => (
+            <div
+              class="petal"
+              data-dx={p.dx}
+              data-dy={p.dy}
+              style={`--x:${p.x}%;--y:${p.y}%;--s:${p.s};--r:${p.r}deg;${p.blur ? `filter:blur(${p.blur}px);` : ''}`}
+            >
+              <div class="petal-float" set:html={petalSvg(`hp${i}`, p.c[0], p.c[1])} />
+            </div>
+          ))}
+          <div class="burst">
+            {Array.from({ length: 7 }).map((_, i) => (
+              <div class="burst-petal" set:html={petalSvg(`bp${i}`, i % 2 ? 'blush' : 'peach', i % 2 ? 'petal' : 'peach-deep')} />
+            ))}
+          </div>
+        </div>
+      </div>
+      <div class="hero-dim" aria-hidden="true"></div>
+    </div>
+
+    <!-- TEXT: always readable, in reading order -->
+    <div class="hero-ui">
+      <div class="hook">
+        <h1 id="hero-title" class="hero-h">{home.hook.headline}</h1>
+        <p class="hero-line">{home.hook.line}</p>
+      </div>
+      <div class="turn">
+        <h2 class="hero-h2">{home.turn.headline}</h2>
+        <p class="hero-line">{home.turn.line}</p>
+      </div>
+      <div class="picker" role="group" aria-labelledby="picker-label">
+        <p id="picker-label" class="picker-label">{home.turn.pickerLabel}</p>
+        <div class="tags">
+          {picker.map((f, i) => (
+            <button type="button" class="tag" data-feeling-btn={f.id} aria-pressed={i === 0 ? 'true' : 'false'}>
+              <span class="tag-hole" aria-hidden="true"></span>
+              <span>{f.label}</span>
+            </button>
+          ))}
+        </div>
+        <div class="picker-links">
+          <a class="link-arrow" href="/order?feeling=thank-you" data-order-link>
+            Send this today
+            <svg width="18" height="12" viewBox="0 0 18 12" aria-hidden="true"><path d="M1 6h15m-5-5 5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>
+          </a>
+          <a class="link-arrow quiet" href={home.turn.link.href}>{home.turn.link.label}</a>
+        </div>
+      </div>
+      <p class="scroll-hint" aria-hidden="true">
+        <span class="scroll-stem"></span> Scroll to find the words
+      </p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    --px: 64%;
+    --py: 73%;
+    --bench: 66%;
+    --vase-h: 74%;
+    position: relative;
+    background: var(--color-blush);
+  }
+  @media (max-aspect-ratio: 4/5) {
+    .hero {
+      --px: 50%;
+      --py: 77%;
+      --bench: 70.5%;
+      --vase-h: 56%;
+    }
+  }
+  .hero-stage {
+    position: relative;
+    height: 100vh;
+    height: 100svh;
+    min-height: 560px;
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .hero-sink { position: absolute; inset: 0; }
+  .layer {
+    position: absolute;
+    inset: 0;
+    transform-origin: var(--px) var(--py);
+    will-change: transform;
+    pointer-events: none;
+  }
+  .depth-inner { position: absolute; inset: 0; }
+
+  /* Background */
+  .wall {
+    position: absolute;
+    inset: -8%;
+    background:
+      radial-gradient(60% 55% at 74% 46%, rgb(252 247 238 / 0.75), transparent 70%),
+      radial-gradient(90% 70% at 10% 0%, rgb(108 26 49 / 0.12), transparent 60%),
+      linear-gradient(180deg, var(--color-blush) 0%, var(--color-blush-50) 55%, var(--color-blush) 100%);
+  }
+  .window {
+    position: absolute;
+    left: 68%;
+    top: 4%;
+    width: clamp(180px, 21vw, 320px);
+    aspect-ratio: 300 / 470;
+    max-height: 60%;
+  }
+  .window svg { width: 100%; height: 100%; display: block; }
+  .beam {
+    position: absolute;
+    left: 40%;
+    top: 20%;
+    width: 46%;
+    height: 70%;
+    background: linear-gradient(200deg, rgb(252 247 238 / 0.55), transparent 62%);
+    clip-path: polygon(62% 0, 100% 0, 58% 100%, 0 100%);
+    opacity: 0.7;
+  }
+
+  /* Far */
+  .shelves {
+    position: absolute;
+    left: -8%;
+    width: 116%;
+    top: 40%;
+    height: 35%;
+    opacity: 0.8;
+  }
+
+  /* Middle */
+  .bench {
+    position: absolute;
+    left: -14%;
+    right: -14%;
+    top: var(--bench);
+    bottom: -25%;
+    box-shadow: 0 -10px 22px -12px rgb(62 42 38 / 0.45);
+  }
+  .bench svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .bench-light {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(40% 50% at 68% 18%, rgb(252 247 238 / 0.32), transparent 70%);
+  }
+  .bench-items { position: absolute; inset: 0; }
+  .spool { position: absolute; left: 83%; top: calc(var(--bench) + 2.5%); width: clamp(54px, 6vw, 92px); }
+  .scissors { position: absolute; left: 44%; top: calc(var(--bench) + 13%); width: clamp(90px, 10vw, 150px); transform: rotate(-8deg); }
+  .cuttings { position: absolute; left: calc(var(--px) - 15%); top: calc(var(--py) + 4%); width: clamp(70px, 8vw, 130px); transform: rotate(6deg); }
+
+  /* Words */
+  .word {
+    position: absolute;
+    left: var(--x);
+    top: var(--y);
+    will-change: transform, opacity;
+  }
+  .word-float { display: block; }
+  .word-text {
+    display: block;
+    transform: translate(-50%, -50%);
+    white-space: nowrap;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 330;
+    font-size: calc(var(--s) * clamp(1.35rem, 2.4vw, 2.4rem));
+    color: var(--color-rose-deep);
+    opacity: var(--o);
+    letter-spacing: -0.01em;
+  }
+
+  /* Near — vase */
+  .vase-wrap {
+    position: absolute;
+    left: var(--px);
+    top: var(--py);
+    height: var(--vase-h);
+    aspect-ratio: 600 / 900;
+    transform: translate(-50%, -97.8%);
+  }
+  .vase-svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+  .vase-shadow {
+    position: absolute;
+    left: 14%;
+    width: 62%;
+    top: 95%;
+    height: 7%;
+    background: radial-gradient(closest-side, rgb(62 42 38 / 0.42), rgb(62 42 38 / 0.18) 55%, transparent);
+  }
+  .vase-caustic {
+    position: absolute;
+    left: 50%;
+    width: 30%;
+    top: 96.5%;
+    height: 4%;
+    background: radial-gradient(closest-side, rgb(252 247 238 / 0.65), transparent);
+  }
+
+  /* Foreground */
+  .ribbon {
+    position: absolute;
+    right: 3%;
+    top: 62%;
+    width: clamp(90px, 11vw, 170px);
+    height: auto;
+    transform: rotate(14deg);
+    opacity: 0.95;
+  }
+  .petal {
+    position: absolute;
+    left: var(--x);
+    top: var(--y);
+    width: calc(var(--s) * clamp(26px, 3.4vw, 54px));
+    rotate: var(--r);
+    will-change: transform;
+  }
+  .petal :global(svg), .burst-petal :global(svg) { display: block; width: 100%; height: auto; }
+  .burst { position: absolute; inset: 0; }
+  .burst-petal {
+    position: absolute;
+    left: var(--px);
+    top: calc(var(--py) - var(--vase-h) * 0.55);
+    width: clamp(18px, 2.2vw, 30px);
+    opacity: 0;
+    will-change: transform, opacity;
+  }
+  .hero-dim { position: absolute; inset: 0; background: var(--color-rose-night); opacity: 0; pointer-events: none; z-index: 8; }
+
+  /* Text */
+  .hero-ui {
+    position: absolute;
+    inset: 0;
+    z-index: 9;
+    padding-inline: var(--spacing-gutter);
+    pointer-events: none;
+  }
+  .hero-ui > * { pointer-events: auto; }
+  .hook, .turn {
+    position: absolute;
+    left: var(--spacing-gutter);
+    top: 19%;
+    width: min(40vw, 36rem);
+  }
+  .turn { top: 24%; }
+  .hero-h, .hero-h2 {
+    font-size: var(--text-display);
+    line-height: var(--text-display--line-height);
+    font-weight: 360;
+    color: var(--color-ink);
+    letter-spacing: -0.035em;
+  }
+  .hero-h2 { font-size: clamp(2.5rem, 5.6vw, 5.4rem); }
+  .hero-h2::first-line { font-style: italic; }
+  .hero-line {
+    margin-top: 1.1rem;
+    max-width: 30rem;
+    font-size: var(--text-lead);
+    line-height: var(--text-lead--line-height);
+    font-weight: 500;
+    color: var(--color-ink);
+    /* a soft blush glow keeps the line legible over the blurred shelves */
+    text-shadow:
+      0 0 2px var(--color-blush-50),
+      0 0 10px var(--color-blush-50),
+      0 0 22px var(--color-blush);
+  }
+  /* Light from the window falls across the back shelves behind the text, softening them */
+  .veil {
+    position: absolute;
+    inset: 0 -10%;
+    background: linear-gradient(90deg, rgb(251 242 239 / 0.82) 0%, rgb(251 242 239 / 0.7) 28%, rgb(251 242 239 / 0) 52%);
+  }
+  .picker {
+    position: absolute;
+    left: var(--spacing-gutter);
+    top: calc(var(--bench) + 4.5%);
+    width: min(40vw, 36rem);
+  }
+  .picker-label {
+    font-family: var(--font-hand);
+    font-size: 1.45rem;
+    color: var(--color-cream);
+    margin-bottom: 0.4rem;
+  }
+  .tags { display: flex; flex-wrap: wrap; gap: 0.6rem 0.75rem; }
+  .tag {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    min-height: 48px;
+    padding: 0.55rem 1.05rem 0.55rem 0.85rem;
+    border: 0;
+    border-radius: 6px 14px 14px 6px;
+    background: var(--color-ivory);
+    color: var(--color-rose-deep);
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 1.12rem;
+    box-shadow: 0 2px 2px rgb(62 42 38 / 0.25), 0 10px 18px -10px rgb(62 42 38 / 0.6);
+    cursor: pointer;
+    transition: transform 0.4s var(--ease-petal), background-color 0.25s, color 0.25s, box-shadow 0.4s;
+  }
+  .tag:nth-child(1) { rotate: -2deg; }
+  .tag:nth-child(2) { rotate: 1.5deg; }
+  .tag:nth-child(3) { rotate: -1deg; }
+  .tag-hole {
+    width: 9px; height: 9px; border-radius: 50%;
+    background: var(--color-wood);
+    box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.35);
+  }
+  .tag:hover { transform: translateY(-3px); }
+  .tag[aria-pressed='true'] {
+    background: var(--color-rose);
+    color: var(--color-cream);
+    transform: translateY(-5px);
+    box-shadow: 0 3px 3px rgb(62 42 38 / 0.25), 0 18px 24px -12px rgb(108 26 49 / 0.8);
+  }
+  .tag[aria-pressed='true'] .tag-hole { background: var(--color-rose-deep); }
+  .picker-links { display: flex; flex-wrap: wrap; gap: 0 1.4rem; margin-top: 0.6rem; }
+  .picker-links .link-arrow { color: var(--color-cream); }
+  .picker-links .quiet { font-weight: 500; opacity: 0.9; }
+
+  .scroll-hint {
+    position: absolute;
+    left: var(--spacing-gutter);
+    top: calc(var(--bench) + 7%);
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    font-family: var(--font-hand);
+    font-size: 1.4rem;
+    color: var(--color-cream);
+  }
+  .scroll-stem { width: 2px; height: 34px; background: var(--color-cream); border-radius: 2px; opacity: 0.8; }
+
+  /* ─────── Phone composition ─────── */
+  @media (max-aspect-ratio: 4/5) {
+    .window { left: 50%; top: 9%; translate: -50% 0; width: min(52vw, 280px); }
+    .beam { left: 22%; top: 30%; width: 70%; height: 50%; }
+    .shelves { top: 45%; height: 33%; }
+    .veil { background: linear-gradient(180deg, rgb(251 242 239 / 0.75) 0%, rgb(251 242 239 / 0.55) 40%, rgb(251 242 239 / 0) 58%); }
+    .spool { left: 82%; }
+    .scissors { display: none; }
+    .cuttings { left: calc(var(--px) - 36%); top: calc(var(--py) + 1%); }
+    .word { left: var(--xm); top: var(--ym); }
+    .word-text { font-size: calc(var(--s) * clamp(1.3rem, 6vw, 1.9rem)); }
+    .ribbon { right: -4%; top: 66%; width: 92px; }
+    .hook, .turn { top: calc(var(--header-h) + 3.5%); right: var(--spacing-gutter); width: auto; }
+    .hero-h { font-size: clamp(2.5rem, 11.5vw, 4.2rem); }
+    .hero-h2 { font-size: clamp(2.3rem, 10.5vw, 3.8rem); }
+    .hero-line { font-size: 1rem; margin-top: 0.7rem; }
+    .hook .hero-line { max-width: 22rem; }
+    .picker { top: auto; bottom: 2.5%; right: var(--spacing-gutter); width: auto; }
+    .picker-label { font-size: 1.3rem; margin-bottom: 0.25rem; }
+    .tags { gap: 0.5rem; }
+    .tag { font-size: 1rem; padding: 0.5rem 0.8rem 0.5rem 0.65rem; gap: 0.45rem; }
+    .picker-links { gap: 0 1rem; margin-top: 0.2rem; }
+    .picker-links .link-arrow { font-size: 0.95rem; }
+    .scroll-hint { top: auto; bottom: 7%; }
+  }
+
+  /* ─────── Motion mode: layered states start here (JS animates them) ─────── */
+  :global(html.motion) .turn,
+  :global(html.motion) .picker { opacity: 0; }
+  :global(html.motion) .hero:not(.is-turn) .picker { pointer-events: none; }
+
+  /* ─────── Still version (reduced motion / no JS): everything visible, in order ─────── */
+  :global(html:not(.motion)) .scroll-hint,
+  :global(html:not(.motion)) .burst { display: none; }
+  :global(html:not(.motion)) .hook { top: 14%; }
+  :global(html:not(.motion)) .hero-h { font-size: clamp(2.4rem, 5vw, 4.6rem); }
+  :global(html:not(.motion)) .turn { top: auto; bottom: calc(100% - var(--bench) + 3%); }
+  :global(html:not(.motion)) .hero-h2 { font-size: clamp(1.9rem, 3.2vw, 3rem); }
+  :global(html:not(.motion)) .turn .hero-line { margin-top: 0.5rem; }
+  /* the hook line lists the words, so the still version doesn't need them floating behind the bouquet */
+  :global(html:not(.motion)) .l-words { display: none; }
+  @media (max-aspect-ratio: 4/5) {
+    :global(html:not(.motion)) .hero-stage { height: auto; min-height: 0; overflow: visible; }
+    :global(html:not(.motion)) .hero-sink { position: relative; height: 100svh; min-height: 560px; overflow: hidden; }
+    :global(html:not(.motion)) .hero-ui { position: static; padding: 0; }
+    :global(html:not(.motion)) .hook { top: calc(var(--header-h) + 3%); }
+    :global(html:not(.motion)) .turn,
+    :global(html:not(.motion)) .picker {
+      position: relative; inset: auto; width: auto;
+      padding: 0 var(--spacing-gutter);
+    }
+    :global(html:not(.motion)) .turn { background: var(--color-wood-deep); padding-top: 1.2rem; }
+    :global(html:not(.motion)) .turn .hero-h2 { color: var(--color-cream); }
+    :global(html:not(.motion)) .turn .hero-line { color: var(--color-blush); }
+    :global(html:not(.motion)) .picker { background: var(--color-wood-deep); padding-bottom: 1.6rem; padding-top: 0.8rem; }
+    :global(html:not(.motion)) .hook .hero-line { display: none; }
+  }
+</style>

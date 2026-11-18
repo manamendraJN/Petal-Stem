@@ -1,0 +1,141 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageIntro from '../components/PageIntro.astro';
+import PageCta from '../components/PageCta.astro';
+import { subscriptionPage, business, whatsapp } from '../content/site';
+const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const waFor = (plan: string) =>
+  `https://wa.me/${business.contact.whatsappNumber}?text=${encodeURIComponent(`${whatsapp.subscription} Plan: ${plan}.`)}`;
+---
+
+<BaseLayout title={subscriptionPage.meta.title} description={subscriptionPage.meta.description}>
+  <PageIntro kicker="Subscription" title={subscriptionPage.headline} line={subscriptionPage.line} tone="sage">
+    <div class="week" aria-label="Weekly delivery day (example)">
+      <p class="hand week-label">Your flower day</p>
+      <ol class="days">
+        {days.map((d, i) => (
+          <li class:list={[i === 0 && 'on']}>
+            <span>{d}</span>
+            {i === 0 && <span class="sr-only">(example delivery day)</span>}
+          </li>
+        ))}
+      </ol>
+      <p class="week-note">Example: every [Monday]. You choose the day.</p>
+    </div>
+  </PageIntro>
+
+  <section class="plans" aria-labelledby="plans-h">
+    <div class="wrap">
+      <h2 id="plans-h" class="title" data-reveal>Pick a plan.</h2>
+      <ul class="tags-row">
+        {subscriptionPage.plans.map((p, i) => (
+          <li class:list={['plan', `p${i + 1}`]} data-reveal data-reveal-delay={i * 0.1}>
+            <span class="string" aria-hidden="true"></span>
+            <article class="plan-tag" aria-labelledby={`plan-${p.id}`}>
+              <span class="hole" aria-hidden="true"></span>
+              <h3 id={`plan-${p.id}`}>{p.name}</h3>
+              <p class="plan-text">{p.text}</p>
+              <p class="plan-price">{p.price}</p>
+              <ul class="plan-inc">
+                {p.includes.map((x) => <li>{x}</li>)}
+              </ul>
+              <a class="btn btn-rose" href={waFor(p.name)} target="_blank" rel="noopener">Start {p.name.toLowerCase()}</a>
+            </article>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="how" aria-labelledby="how-h">
+    <div class="wrap how-grid">
+      <h2 id="how-h" class="title" data-reveal>Simple as a weekly hello.</h2>
+      <ol class="how-list">
+        {subscriptionPage.steps.map((s, i) => (
+          <li data-reveal>
+            <span class="how-n" aria-hidden="true">{i + 1}</span>
+            <h3><span class="sr-only">Step {i + 1}: </span>{s.title}</h3>
+            <p>{s.text}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <section class="faq" aria-labelledby="faq-h">
+    <div class="wrap faq-grid">
+      <h2 id="faq-h" class="title" data-reveal>Questions</h2>
+      <div class="faq-list">
+        {subscriptionPage.faqs.map((f) => (
+          <details data-reveal>
+            <summary>{f.q}</summary>
+            <p>{f.a}</p>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <PageCta title="Want flowers today, too?" waText={whatsapp.subscription} />
+</BaseLayout>
+
+<style>
+  .title { font-size: var(--text-title); line-height: var(--text-title--line-height); }
+  .week { padding: 1.4rem 1.5rem; background: var(--color-cream); border-radius: var(--radius-card); }
+  .week-label { font-size: 1.5rem; color: var(--color-stem-deep); }
+  .days { margin-top: 0.6rem; display: grid; grid-template-columns: repeat(6, 1fr); gap: 0.4rem; }
+  .days li { display: grid; place-items: center; aspect-ratio: 1; border-radius: 12px; border: 1.5px solid var(--color-sage); font-weight: 600; font-size: 0.85rem; color: var(--color-stem-deep); }
+  .days li.on { background: var(--color-rose); border-color: var(--color-rose); color: var(--color-cream); }
+  .week-note { margin-top: 0.7rem; font-size: 0.88rem; color: var(--color-ink-soft); }
+
+  .plans { background: var(--color-cream); padding-block: var(--spacing-section); overflow: clip; }
+  .tags-row { margin-top: 2rem; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(1rem, 3vw, 3rem); align-items: start; }
+  .plan { position: relative; display: flex; flex-direction: column; align-items: center; }
+  .string { width: 2px; height: 70px; background: var(--color-kraft); }
+  .p2 .string { height: 130px; }
+  .p3 .string { height: 40px; }
+  .plan-tag {
+    position: relative;
+    width: 100%;
+    padding: 2.6rem 1.6rem 1.8rem;
+    background: var(--color-kraft);
+    background-image: linear-gradient(170deg, rgb(252 247 238 / 0.25), transparent 60%);
+    border-radius: 14px 14px 18px 18px;
+    clip-path: polygon(16% 0, 84% 0, 100% 9%, 100% 100%, 0 100%, 0 9%);
+    color: var(--color-ink);
+    box-shadow: var(--shadow-paper);
+  }
+  .p1 .plan-tag { rotate: -2deg; }
+  .p2 .plan-tag { rotate: 1.5deg; background-color: var(--color-blush-deep); }
+  .p3 .plan-tag { rotate: -1deg; }
+  .hole { position: absolute; top: 0.9rem; left: 50%; translate: -50% 0; width: 14px; height: 14px; border-radius: 50%; background: var(--color-cream); box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.3); }
+  .plan-tag h3 { font-size: 2rem; font-style: italic; }
+  .plan-text { margin-top: 0.4rem; }
+  .plan-price { margin-top: 1rem; font-family: var(--font-display); font-size: 1.6rem; color: var(--color-rose-deep); }
+  .plan-inc { margin-block: 1rem 1.4rem; display: grid; gap: 0.35rem; font-size: 0.93rem; }
+  .plan-inc li::before { content: '— '; color: var(--color-rose); }
+
+  .how { background: var(--color-blush-50); padding-block: var(--spacing-section); }
+  .how-grid { display: grid; grid-template-columns: 0.8fr 1.4fr; gap: 3rem; }
+  .how-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.6rem; }
+  .how-n { display: inline-grid; place-items: center; width: 2.4rem; height: 2.4rem; border-radius: 50%; background: var(--color-stem); color: var(--color-cream); font-weight: 600; }
+  .how-list h3 { margin-top: 0.8rem; font-size: 1.5rem; }
+  .how-list p { margin-top: 0.3rem; color: var(--color-ink-soft); }
+
+  .faq { background: var(--color-cream); padding-block: var(--spacing-section); }
+  .faq-grid { display: grid; grid-template-columns: 0.8fr 1.4fr; gap: 3rem; }
+  details { border-bottom: 1px solid var(--color-blush-deep); }
+  summary { min-height: 56px; display: flex; align-items: center; justify-content: space-between; gap: 1rem; cursor: pointer; font-family: var(--font-display); font-size: 1.3rem; list-style: none; }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: '+'; font-family: var(--font-sans); font-size: 1.5rem; color: var(--color-rose); transition: rotate 0.3s var(--ease-petal); }
+  details[open] summary::after { rotate: 45deg; }
+  details p { padding-bottom: 1.2rem; color: var(--color-ink-soft); max-width: 40rem; }
+
+  @media (max-width: 860px) {
+    .tags-row { grid-template-columns: 1fr; gap: 0; }
+    .string, .p2 .string, .p3 .string { height: 36px; }
+    .plan:first-child .string { height: 16px; }
+    .how-grid, .faq-grid { grid-template-columns: 1fr; gap: 1.5rem; }
+    .how-list { grid-template-columns: 1fr; }
+  }
+</style>

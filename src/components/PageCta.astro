@@ -1,0 +1,39 @@
+---
+/** Closing invitation for inner pages: repeat the call to action. */
+import Edge from './Edge.astro';
+import { business, whatsapp } from '../content/site';
+interface Props {
+  title?: string;
+  line?: string;
+  waText?: string;
+}
+const {
+  title = 'Ready to say it?',
+  line = 'Order before [2:00 pm] and we deliver today in [Kandy], with your note written by hand.',
+  waText = whatsapp.general,
+} = Astro.props;
+const wa = `https://wa.me/${business.contact.whatsappNumber}?text=${encodeURIComponent(waText)}`;
+---
+
+<section class="pcta on-dark">
+  <Edge fill="rose-deep" seed={17} />
+  <div class="wrap pcta-inner">
+    <h2 class="pcta-h" data-reveal>{title}</h2>
+    <div data-reveal>
+      <p class="pcta-line">{line}</p>
+      <div class="pcta-btns">
+        <a class="btn btn-cream" href="/order">Order for today</a>
+        <a class="btn btn-line" href={wa} target="_blank" rel="noopener">WhatsApp us</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .pcta { position: relative; z-index: 3; background: var(--color-rose-deep); color: var(--color-cream); padding-block: clamp(4rem, 8vw, 7rem) clamp(5rem, 9vw, 8rem); }
+  .pcta-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem 4rem; align-items: end; }
+  .pcta-h { font-size: var(--text-title); line-height: var(--text-title--line-height); font-style: italic; color: var(--color-cream); }
+  .pcta-line { color: var(--color-blush); font-size: var(--text-lead); max-width: 30rem; }
+  .pcta-btns { margin-top: 1.4rem; display: flex; flex-wrap: wrap; gap: 0.8rem; }
+  @media (max-width: 760px) { .pcta-inner { grid-template-columns: 1fr; } }
+</style>
