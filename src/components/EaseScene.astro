@@ -1,0 +1,109 @@
+---
+/** Scene 5 — the ease: three steps, carried by a single stem that grows past each one. */
+import { home, business, whatsapp } from '../content/site';
+const wa = `https://wa.me/${business.contact.whatsappNumber}?text=${encodeURIComponent(whatsapp.general)}`;
+
+// Desktop stem: a gentle horizontal wave with a bud at each step (x = 200, 600, 1000).
+const hStem = 'M0 92C120 70 160 104 200 86S300 60 400 84S520 108 600 84S720 58 800 82S920 108 1000 84S1120 64 1200 80';
+const vStem = 'M30 0C14 60 46 90 30 110S14 170 30 220S46 280 30 330S14 400 30 440S46 500 30 560S20 620 30 660';
+const nodesH = [200, 600, 1000];
+const nodesV = [110, 330, 560];
+---
+
+<section class="ease" data-scene="ease" data-sink id="how" aria-labelledby="ease-title">
+  <div class="ease-inner" data-sink-inner>
+    <div class="wrap">
+      <div class="ease-head">
+        <p class="kicker">{home.ease.kicker}</p>
+        <h2 id="ease-title" class="ease-h">{home.ease.headline}</h2>
+      </div>
+
+      <div class="steps-area">
+        <svg class="stem stem-h" viewBox="0 0 1200 170" preserveAspectRatio="none" aria-hidden="true">
+          <defs><clipPath id="ease-clip-h"><rect class="ease-reveal" x="0" y="-40" width="1200" height="260" /></clipPath></defs>
+          <g clip-path="url(#ease-clip-h)">
+            <path d={hStem} fill="none" stroke="var(--color-stem)" stroke-width="3.5" stroke-linecap="round" vector-effect="non-scaling-stroke" />
+          </g>
+        </svg>
+        <svg class="stem stem-v" viewBox="0 0 60 660" preserveAspectRatio="none" aria-hidden="true">
+          <defs><clipPath id="ease-clip-v"><rect class="ease-reveal-v" x="-20" y="0" width="100" height="660" /></clipPath></defs>
+          <g clip-path="url(#ease-clip-v)">
+            <path d={vStem} fill="none" stroke="var(--color-stem)" stroke-width="3" stroke-linecap="round" vector-effect="non-scaling-stroke" />
+          </g>
+        </svg>
+
+        <ol class="steps">
+          {home.ease.steps.map((s, i) => (
+            <li class="step" style={`--nx:${nodesH[i] / 12}%;--ny:${(nodesV[i] / 660) * 100}%`}>
+              <span class="bud" aria-hidden="true">
+                <svg viewBox="0 0 60 60">
+                  <path d="M30 58C30 44 30 36 30 30" stroke="var(--color-stem)" stroke-width="3" />
+                  <path d="M30 44C20 44 12 38 10 30C20 30 28 36 30 44Z" fill="var(--color-leaf)" />
+                  <path d="M30 40C40 40 48 34 50 26C40 26 32 32 30 40Z" fill="var(--color-leaf-light)" />
+                  <path d="M30 4C38 10 42 18 40 26C38 32 22 32 20 26C18 18 22 10 30 4Z" fill={['var(--color-peach)', 'var(--color-petal)', 'var(--color-rose)'][i]} />
+                  <path d="M30 6C27 14 27 22 30 30" stroke="var(--color-ivory)" stroke-opacity="0.5" stroke-width="2" fill="none" />
+                </svg>
+              </span>
+              <span class="step-num" aria-hidden="true">{i + 1}</span>
+              <h3 class="step-title"><span class="sr-only">Step {i + 1}: </span>{s.title}</h3>
+              <p class="step-text">{s.text}</p>
+            </li>
+          ))}
+        </ol>
+      </div>
+
+      <div class="ease-cta">
+        <a class="btn btn-rose" href={home.ease.link.href}>{home.ease.link.label}</a>
+        <a class="btn btn-line" href={wa} target="_blank" rel="noopener">Order on WhatsApp</a>
+      </div>
+    </div>
+  </div>
+  <div class="ease-shade" data-sink-shade aria-hidden="true"></div>
+</section>
+
+<style>
+  .ease { position: relative; z-index: 2; background: var(--color-cream); overflow: clip; }
+  .ease-inner { padding-block: var(--spacing-section) clamp(6rem, 14vw, 12rem); }
+  .ease-shade { position: absolute; inset: 0; background: var(--color-rose-night); opacity: 0; pointer-events: none; }
+  .ease-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 0.5rem 2rem; }
+  .ease-head .kicker { order: 2; }
+  .ease-h { font-size: var(--text-title); line-height: var(--text-title--line-height); max-width: 12ch; }
+
+  .steps-area { position: relative; margin-top: clamp(3rem, 6vw, 5rem); }
+  .stem-h { position: absolute; left: 0; top: 0; width: 100%; height: 120px; overflow: visible; }
+  .stem-v { display: none; }
+  .steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(1rem, 3vw, 3rem); position: relative; }
+  .step { position: relative; padding-top: 140px; }
+  .step:nth-child(2) { margin-top: clamp(1rem, 3vw, 3rem); }
+  .step:nth-child(3) { margin-top: clamp(2rem, 6vw, 6rem); }
+  .bud { position: absolute; left: 50%; top: 12px; width: 64px; translate: -50% 0; }
+  .step:nth-child(2) .bud { top: calc(12px - clamp(1rem, 3vw, 3rem)); }
+  .step:nth-child(3) .bud { top: calc(12px - clamp(2rem, 6vw, 6rem)); }
+  .bud svg { display: block; width: 100%; }
+  .step-num {
+    position: absolute;
+    left: 0;
+    top: 86px;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: clamp(5rem, 9vw, 8.5rem);
+    line-height: 1;
+    color: var(--color-blush-deep);
+    z-index: -1;
+  }
+  .step-title { font-size: clamp(1.5rem, 2.3vw, 2.1rem); line-height: 1.1; position: relative; padding-left: clamp(2.6rem, 4vw, 4rem); }
+  .step-text { margin-top: 0.6rem; color: var(--color-ink-soft); max-width: 22rem; padding-left: clamp(2.6rem, 4vw, 4rem); }
+  .ease-cta { margin-top: clamp(3rem, 6vw, 5rem); display: flex; flex-wrap: wrap; gap: 0.8rem; justify-content: flex-end; }
+
+  @media (max-width: 860px) {
+    .stem-h { display: none; }
+    .stem-v { display: block; position: absolute; left: 0; top: 0; width: 60px; height: 100%; }
+    .steps { grid-template-columns: 1fr; grid-auto-rows: 1fr; gap: 1.5rem; padding-left: 0; }
+    .step, .step:nth-child(2), .step:nth-child(3) { margin-top: 0; padding: 0.4rem 0 0.4rem 84px; min-height: 9.5rem; }
+    .bud, .step:nth-child(2) .bud, .step:nth-child(3) .bud { left: 30px; top: 0; width: 50px; }
+    .step-num { left: 74px; top: -0.4rem; font-size: 4.6rem; }
+    .step-title, .step-text { padding-left: 2.2rem; }
+    .step-title { padding-top: 0.6rem; }
+    .ease-cta { justify-content: flex-start; }
+  }
+</style>

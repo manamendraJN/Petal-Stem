@@ -1,0 +1,74 @@
+---
+/**
+ * Inner-page opening: the page's word, and a stem that grows beside it.
+ * Each page passes its own right-hand composition through the slot.
+ */
+interface Props {
+  kicker: string;
+  title: string;
+  line: string;
+  tone?: 'blush' | 'cream' | 'sage';
+}
+const { kicker, title, line, tone = 'blush' } = Astro.props;
+---
+
+<section class:list={['intro', `tone-${tone}`]} data-scene="intro">
+  <div class="wrap intro-grid">
+    <div class="intro-text">
+      <p class="kicker">{kicker}</p>
+      <h1 class="intro-h" data-intro-title>{title}</h1>
+      <p class="intro-line">{line}</p>
+      <slot name="actions" />
+    </div>
+    <svg class="sprig" viewBox="0 0 120 420" aria-hidden="true">
+      <g class="sprig-stem">
+        <path d="M60 420C62 340 48 280 62 200S70 90 58 20" fill="none" stroke="var(--color-stem)" stroke-width="3" stroke-linecap="round" />
+      </g>
+      <g class="sprig-leaf" data-o="100% 100%"><path d="M60 300C40 296 24 282 18 262C40 262 56 276 60 300Z" fill="var(--color-leaf)" /></g>
+      <g class="sprig-leaf" data-o="0% 100%"><path d="M63 220C84 214 98 198 102 178C80 180 66 196 63 220Z" fill="var(--color-leaf-light)" /></g>
+      <g class="sprig-leaf" data-o="100% 100%"><path d="M62 130C44 124 32 108 30 90C50 94 60 108 62 130Z" fill="var(--color-leaf)" /></g>
+      <g class="sprig-bloom" data-o="50% 100%">
+        <path d="M58 22C70 10 74 -2 70 -10C62 -4 56 6 58 22Z" fill="var(--color-petal)" />
+        <path d="M58 22C46 10 42 -2 46 -10C54 -4 60 6 58 22Z" fill="var(--color-rose)" />
+        <path d="M58 22C60 6 58 -8 58 -16C52 -6 52 8 58 22Z" fill="var(--color-blush-deep)" />
+      </g>
+    </svg>
+    <div class="intro-side">
+      <slot />
+    </div>
+  </div>
+</section>
+
+<style>
+  .intro {
+    position: relative;
+    padding-top: calc(var(--header-h) + clamp(2.5rem, 7vw, 6rem));
+    padding-bottom: clamp(3rem, 7vw, 6rem);
+    overflow: clip;
+  }
+  .tone-blush { background: var(--color-blush); }
+  .tone-cream { background: var(--color-cream); }
+  .tone-sage { background: var(--color-sage); }
+  .intro-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.25fr) auto minmax(0, 1fr);
+    gap: clamp(1rem, 3vw, 3rem);
+    align-items: end;
+  }
+  .intro-h {
+    margin-top: 0.8rem;
+    font-size: var(--text-display);
+    line-height: var(--text-display--line-height);
+    font-weight: 340;
+    letter-spacing: -0.035em;
+  }
+  .intro-h :global(.w) { display: inline-block; }
+  .intro-line { margin-top: 1.2rem; font-size: var(--text-lead); color: var(--color-ink-soft); max-width: 34rem; }
+  .sprig { width: clamp(60px, 7vw, 100px); height: auto; overflow: visible; align-self: stretch; max-height: 420px; }
+  .intro-side { align-self: stretch; display: flex; flex-direction: column; justify-content: flex-end; }
+  @media (max-width: 860px) {
+    .intro-grid { grid-template-columns: minmax(0, 1fr) auto; }
+    .intro-side { grid-column: 1 / -1; }
+    .sprig { width: 54px; align-self: end; max-height: 240px; }
+  }
+</style>

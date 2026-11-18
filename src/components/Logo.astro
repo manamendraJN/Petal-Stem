@@ -1,0 +1,47 @@
+---
+/**
+ * Petal & Stem mark: a stem, a petal and a leaf that together read as a "P".
+ * Geometric, flat, readable at 16px. `tone` switches colours for dark grounds.
+ */
+interface Props {
+  tone?: 'light' | 'dark';
+  wordmark?: boolean;
+  class?: string;
+}
+const { tone = 'light', wordmark = true, class: cls = '' } = Astro.props;
+---
+
+<span class:list={['logo', `tone-${tone}`, cls]}>
+  <svg class="mark" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+    <rect class="m-stem" x="9.5" y="4" width="3.6" height="24.5" rx="1.8"></rect>
+    <path class="m-petal" d="M13.6 4H19.6A6.4 6.4 0 0 1 26 10.4V16.8H20A6.4 6.4 0 0 1 13.6 10.4Z"></path>
+    <path class="m-leaf" d="M13.6 27V23.4A3.6 3.6 0 0 1 17.2 19.8H20.8V23.4A3.6 3.6 0 0 1 17.2 27Z"></path>
+  </svg>
+  {
+    wordmark && (
+      <span class="word">
+        Petal <em>&amp;</em> Stem
+      </span>
+    )
+  }
+</span>
+
+<style>
+  .logo { display: inline-flex; align-items: center; gap: 0.55rem; line-height: 1; }
+  .mark { width: 1.9em; height: 1.9em; flex: none; }
+  .tone-light .m-stem, .tone-light .m-leaf { fill: var(--color-stem); }
+  .tone-light .m-petal { fill: var(--color-rose); }
+  .tone-dark .m-stem, .tone-dark .m-leaf { fill: var(--color-sage); }
+  .tone-dark .m-petal { fill: var(--color-petal); }
+  .word {
+    font-family: var(--font-display);
+    font-size: 1.32em;
+    font-weight: 420;
+    letter-spacing: -0.02em;
+    white-space: nowrap;
+  }
+  .tone-light .word { color: var(--color-ink); }
+  .tone-dark .word { color: var(--color-cream); }
+  .word em { font-style: italic; font-weight: 340; color: var(--color-rose); }
+  .tone-dark .word em { color: var(--color-gold-soft); }
+</style>

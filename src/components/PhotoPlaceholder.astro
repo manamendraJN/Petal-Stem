@@ -1,0 +1,78 @@
+---
+/**
+ * A clearly labelled photo placeholder at the correct size and shape.
+ * To use a real photo: put it in src/assets/photos/, import it, and pass it as `src`:
+ *   import hands from '../assets/photos/hands.jpg';
+ *   <PhotoPlaceholder src={hands} alt="Hands tying a bouquet" ... />
+ * Astro's <Image> then resizes and optimises it at build time.
+ */
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+interface Props {
+  label: string;
+  note?: string;
+  ratio?: string;
+  src?: ImageMetadata;
+  alt?: string;
+  sizes?: string;
+  class?: string;
+  tone?: 'blush' | 'paper' | 'sage' | 'night';
+  shape?: 'rect' | 'arch';
+}
+const {
+  label,
+  note,
+  ratio = '4 / 5',
+  src,
+  alt = '',
+  sizes = '(max-width: 768px) 100vw, 50vw',
+  class: cls = '',
+  tone = 'blush',
+  shape = 'rect',
+} = Astro.props;
+---
+
+{
+  src ? (
+    <Image src={src} alt={alt} sizes={sizes} widths={[480, 800, 1200, 1600]} class:list={['ph-img', shape, cls]} style={`aspect-ratio:${ratio}`} />
+  ) : (
+    <div class:list={['ph', `t-${tone}`, shape, cls]} style={`aspect-ratio:${ratio}`} role="img" aria-label={`Photo placeholder: ${label}`}>
+      <svg class="ph-icon" viewBox="0 0 48 40" aria-hidden="true">
+        <path d="M6 10h8l4-5h12l4 5h8a2 2 0 0 1 2 2v22a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V12a2 2 0 0 1 2-2Z" fill="none" stroke="currentColor" stroke-width="2" />
+        <circle cx="24" cy="22" r="8" fill="none" stroke="currentColor" stroke-width="2" />
+      </svg>
+      <span class="placeholder-tag">Photo placeholder</span>
+      <span class="ph-label">{label}</span>
+      {note && <span class="ph-note">{note}</span>}
+    </div>
+  )
+}
+
+<style>
+  .ph, .ph-img { width: 100%; display: block; object-fit: cover; }
+  .ph-img { border-radius: var(--radius-card); }
+  .ph {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-end;
+    gap: 0.35rem;
+    padding: clamp(0.8rem, 2vw, 1.4rem);
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    color: var(--color-rose-deep);
+    background-image: repeating-linear-gradient(135deg, transparent 0 14px, rgb(108 26 49 / 0.05) 14px 15px);
+    outline: 1.5px dashed rgb(108 26 49 / 0.35);
+    outline-offset: -10px;
+  }
+  .ph.arch { border-radius: 999px 999px var(--radius-card) var(--radius-card); }
+  .t-blush { background-color: var(--color-blush-deep); }
+  .t-paper { background-color: var(--color-paper); }
+  .t-sage { background-color: var(--color-sage); color: var(--color-stem-deep); }
+  .t-night { background-color: var(--color-rose-deep); color: var(--color-blush); outline-color: rgb(243 218 211 / 0.4); }
+  .ph-icon { width: 34px; opacity: 0.6; margin-bottom: auto; }
+  .ph-label { font-family: var(--font-display); font-size: clamp(0.98rem, 1.4vw, 1.2rem); line-height: 1.25; max-width: 22ch; }
+  .ph-note { font-size: 0.78rem; opacity: 0.8; line-height: 1.35; }
+</style>

@@ -1,0 +1,227 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageIntro from '../components/PageIntro.astro';
+import { orderPage, feelings, sizes, business, home } from '../content/site';
+const today = new Date().toISOString().slice(0, 10);
+---
+
+<BaseLayout title={orderPage.meta.title} description={orderPage.meta.description}>
+  <PageIntro kicker="Order" title={orderPage.headline} line={orderPage.line} tone="blush">
+    <ul class="facts">
+      <li><span>Same-day cut-off</span>{business.contact.sameDayCutoff}</li>
+      <li><span>Delivery</span>{business.contact.deliveryFee} · {business.contact.deliveryArea}</li>
+      <li><span>Hours</span>{business.contact.deliveryHours}</li>
+    </ul>
+  </PageIntro>
+
+  <section class="order" data-scene="order">
+    <div class="wrap order-grid">
+      <form
+        id="order-form"
+        class="order-form"
+        action={business.formspreeEndpoint}
+        method="POST"
+        data-formspree
+        data-success={orderPage.sent}
+      >
+        <input type="hidden" name="_subject" value="New order request — Petal & Stem" />
+
+        <fieldset class="ostep">
+          <legend><span class="n" aria-hidden="true">1</span> Choose a feeling</legend>
+          <div class="feel-grid">
+            {feelings.map((f, i) => (
+              <label class="feel">
+                <input type="radio" name="feeling" value={f.id} checked={i === 0} required />
+                <span class="feel-word">{f.label}</span>
+                <span class="feel-line">{f.line}</span>
+              </label>
+            ))}
+          </div>
+        </fieldset>
+
+        <fieldset class="ostep">
+          <legend><span class="n" aria-hidden="true">2</span> Choose a bouquet &amp; size</legend>
+          <div class="bq-grid">
+            {feelings.map((f, fi) =>
+              f.bouquets.map((b, bi) => (
+                <label class="bq-opt" data-for-feeling={f.id} hidden={fi !== 0}>
+                  <input type="radio" name="bouquet" value={b.name} checked={fi === 0 && bi === 0} disabled={fi !== 0} />
+                  <span class="bq-ph" aria-hidden="true"><span class="placeholder-tag">Photo</span></span>
+                  <span class="bq-name">{b.name}</span>
+                  <span class="bq-flowers">{b.flowers}</span>
+                </label>
+              )),
+            )}
+          </div>
+          <div class="size-row" role="radiogroup" aria-label="Size">
+            {sizes.map((s, i) => (
+              <label class="size">
+                <input type="radio" name="size" value={s.label} checked={i === 1} />
+                <span class="size-name">{s.label}</span>
+                <span class="size-price">{s.price}</span>
+              </label>
+            ))}
+          </div>
+        </fieldset>
+
+        <fieldset class="ostep">
+          <legend><span class="n" aria-hidden="true">3</span> Write your note</legend>
+          <div class="field">
+            <label for="o-note">Your note <span class="hint">(we write it by hand)</span></label>
+            <textarea id="o-note" name="note" maxlength="240" placeholder={orderPage.notePlaceholder} data-note-input></textarea>
+            <div class="note-tools">
+              <button type="button" class="link-arrow" data-note-help>Help me find the words</button>
+              <span class="hint" data-note-count aria-live="polite">0 / 240</span>
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset class="ostep">
+          <legend><span class="n" aria-hidden="true">4</span> Delivery details</legend>
+          <div class="two">
+            <div class="field">
+              <label for="o-to">Who is it for?</label>
+              <input id="o-to" name="recipient_name" autocomplete="off" required />
+            </div>
+            <div class="field">
+              <label for="o-to-phone">Their phone</label>
+              <input id="o-to-phone" name="recipient_phone" type="tel" inputmode="tel" autocomplete="off" />
+            </div>
+          </div>
+          <div class="field">
+            <label for="o-addr">Delivery address in {business.city}</label>
+            <textarea id="o-addr" name="address" rows="2" required></textarea>
+          </div>
+          <div class="two">
+            <div class="field">
+              <label for="o-date">Delivery date</label>
+              <input id="o-date" name="date" type="date" min={today} value={today} required />
+            </div>
+            <div class="field">
+              <label for="o-time">Time</label>
+              <select id="o-time" name="time">
+                <option>As soon as possible</option>
+                <option>Morning ([time window])</option>
+                <option>Afternoon ([time window])</option>
+                <option>Evening ([time window])</option>
+              </select>
+            </div>
+          </div>
+          <div class="two">
+            <div class="field">
+              <label for="o-name">Your name</label>
+              <input id="o-name" name="name" autocomplete="name" required />
+            </div>
+            <div class="field">
+              <label for="o-phone">Your phone or WhatsApp</label>
+              <input id="o-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" required />
+            </div>
+          </div>
+          <div class="field">
+            <label for="o-email">Your email <span class="hint">(optional)</span></label>
+            <input id="o-email" name="email" type="email" autocomplete="email" />
+          </div>
+        </fieldset>
+      </form>
+
+      <aside class="preview" aria-label="Your order">
+        <div class="preview-card">
+          <p class="hand pc-greet" data-pv-greet>{home.invitation.cardGreeting}</p>
+          <p class="hand pc-note" data-pv-note>{feelings[0].cardMessage}</p>
+          <p class="hand pc-sign" data-pv-sign>{home.invitation.cardSign}</p>
+          <span class="placeholder-tag pc-tag">Card preview</span>
+        </div>
+        <dl class="summary">
+          <div><dt>Feeling</dt><dd data-sum-feeling>{feelings[0].label}</dd></div>
+          <div><dt>Bouquet</dt><dd data-sum-bouquet>{feelings[0].bouquets[0].name}</dd></div>
+          <div><dt>Size</dt><dd data-sum-size>{sizes[1].label} · {sizes[1].price}</dd></div>
+          <div><dt>Delivery</dt><dd>{business.contact.deliveryFee}</dd></div>
+        </dl>
+        <div class="send">
+          <button type="button" class="btn btn-rose" data-order-wa form="order-form">
+            Send order on WhatsApp
+          </button>
+          <button type="submit" class="btn btn-line" form="order-form">Send order request</button>
+          <p class="status" data-form-status data-for="order-form" role="status"></p>
+          <p class="pay">You pay when we confirm your order: {business.contact.paymentMethods}.</p>
+        </div>
+      </aside>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .facts { display: grid; gap: 0.8rem; padding: 1.2rem 1.4rem; background: var(--color-blush-50); border-radius: var(--radius-card); }
+  .facts li { display: grid; gap: 0.1rem; font-weight: 500; }
+  .facts span { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--color-rose); }
+
+  .order { background: var(--color-cream); padding-block: clamp(3rem, 6vw, 5rem) var(--spacing-section); }
+  .order-grid { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr); gap: clamp(2rem, 5vw, 5rem); align-items: start; }
+  .ostep { border: 0; margin: 0 0 2.6rem; padding: 0; min-width: 0; }
+  legend { display: flex; align-items: center; gap: 0.8rem; font-family: var(--font-display); font-size: clamp(1.5rem, 2.4vw, 2rem); margin-bottom: 1.1rem; }
+  .n { width: 2.2rem; height: 2.2rem; flex: none; display: inline-grid; place-items: center; border-radius: 50%; background: var(--color-rose); color: var(--color-cream); font-family: var(--font-sans); font-size: 1rem; font-weight: 600; }
+
+  .feel-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 0.7rem; }
+  .feel, .bq-opt, .size {
+    position: relative;
+    display: grid;
+    gap: 0.2rem;
+    padding: 0.9rem 1rem;
+    border-radius: 14px;
+    background: var(--color-ivory);
+    border: 1.5px solid var(--color-blush-deep);
+    cursor: pointer;
+    transition: border-color 0.2s, background-color 0.2s, transform 0.3s var(--ease-petal);
+  }
+  .feel:hover, .bq-opt:hover, .size:hover { border-color: var(--color-rose); }
+  .feel input, .bq-opt input, .size input { position: absolute; opacity: 0; inset: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; }
+  .feel:has(input:checked), .bq-opt:has(input:checked), .size:has(input:checked) { border-color: var(--color-rose); background: var(--color-blush-50); box-shadow: inset 0 0 0 1.5px var(--color-rose); }
+  .feel:has(input:focus-visible), .bq-opt:has(input:focus-visible), .size:has(input:focus-visible) { outline: 2.5px solid var(--color-rose); outline-offset: 3px; }
+  .feel-word { font-family: var(--font-display); font-style: italic; font-size: 1.35rem; color: var(--color-rose-deep); }
+  .feel-line { font-size: 0.85rem; color: var(--color-ink-soft); line-height: 1.4; }
+
+  .bq-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.8rem; }
+  .bq-opt[hidden] { display: none; }
+  .bq-ph { aspect-ratio: 4 / 3; border-radius: 10px; background: var(--color-blush-deep); display: grid; place-items: center; color: var(--color-rose-deep); margin-bottom: 0.4rem; background-image: repeating-linear-gradient(135deg, transparent 0 12px, rgb(108 26 49 / 0.06) 12px 13px); }
+  .bq-name { font-weight: 600; }
+  .bq-flowers { font-size: 0.85rem; color: var(--color-ink-soft); }
+  .size-row { margin-top: 0.9rem; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.6rem; }
+  .size-name { font-weight: 600; }
+  .size-price { font-size: 0.88rem; color: var(--color-ink-soft); }
+
+  .note-tools { display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+  .note-tools button { border: 0; background: none; padding: 0; cursor: pointer; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .ostep .field + .field, .ostep .two + .field, .ostep .field + .two, .ostep .two + .two { margin-top: 1rem; }
+
+  .preview { position: sticky; top: calc(var(--header-h) + 1.5rem); display: grid; gap: 1.4rem; }
+  .preview-card {
+    position: relative;
+    padding: 1.8rem 1.8rem 2.4rem;
+    background: var(--color-ivory);
+    border-radius: 4px;
+    box-shadow: var(--shadow-lift);
+    rotate: 1.5deg;
+  }
+  .pc-greet, .pc-sign { font-size: 1.6rem; color: var(--color-ink-soft); }
+  .pc-note { margin-block: 0.6rem; font-size: clamp(1.7rem, 2.4vw, 2.2rem); line-height: 1.15; color: var(--color-rose-deep); min-height: 2.3em; overflow-wrap: anywhere; }
+  .pc-sign { text-align: right; }
+  .pc-tag { position: absolute; left: 1.2rem; bottom: 0.8rem; color: var(--color-ink-soft); }
+  .summary { display: grid; gap: 0.5rem; padding: 1.1rem 1.2rem; border-radius: var(--radius-card); background: var(--color-blush-50); }
+  .summary div { display: flex; justify-content: space-between; gap: 1rem; font-size: 0.95rem; }
+  .summary dt { color: var(--color-ink-soft); }
+  .summary dd { font-weight: 600; text-align: right; }
+  .send { display: grid; gap: 0.7rem; }
+  .status { min-height: 1.4em; font-weight: 600; color: var(--color-stem-deep); }
+  .pay { font-size: 0.85rem; color: var(--color-ink-soft); }
+
+  @media (max-width: 900px) {
+    .order-grid { grid-template-columns: 1fr; }
+    .preview { position: static; }
+    .feel-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .feel-line { display: none; }
+    .two { grid-template-columns: 1fr; }
+    .size-row { gap: 0.4rem; }
+    .size { padding: 0.7rem; }
+  }
+</style>

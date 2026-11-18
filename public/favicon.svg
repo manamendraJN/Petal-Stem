@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- Petal & Stem mark. Colours mirror the design tokens: cream, stem green, deep rose. -->
+  <rect width="32" height="32" rx="8" fill="#f8f1e5"/>
+  <rect x="8.3" y="5" width="3.4" height="22.5" rx="1.7" fill="#4d6a46"/>
+  <path d="M12.2 5H17.9A6 6 0 0 1 23.9 11V17H18.2A6 6 0 0 1 12.2 11Z" fill="#9b2c48"/>
+  <path d="M12.2 26V22.6A3.4 3.4 0 0 1 15.6 19.2H19V22.6A3.4 3.4 0 0 1 15.6 26Z" fill="#4d6a46"/>
+</svg>

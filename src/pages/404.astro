@@ -1,0 +1,17 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageIntro from '../components/PageIntro.astro';
+---
+
+<BaseLayout title="Page not found — Petal & Stem" description="This page has wilted. Let’s get you back to the flowers.">
+  <PageIntro kicker="404" title="This page has wilted." line="The link may be old, or the page has moved. The flowers are still fresh, though." tone="blush">
+    <div slot="actions" class="actions">
+      <a class="btn btn-rose" href="/">Back to the start</a>
+      <a class="btn btn-line" href="/bouquets">See bouquets</a>
+    </div>
+  </PageIntro>
+</BaseLayout>
+
+<style>
+  .actions { margin-top: 1.6rem; display: flex; flex-wrap: wrap; gap: 0.7rem; }
+</style>

@@ -1,0 +1,165 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageIntro from '../components/PageIntro.astro';
+import PhotoPlaceholder from '../components/PhotoPlaceholder.astro';
+import PageCta from '../components/PageCta.astro';
+import { weddingsPage, business, whatsapp } from '../content/site';
+const wa = `https://wa.me/${business.contact.whatsappNumber}?text=${encodeURIComponent(whatsapp.wedding)}`;
+---
+
+<BaseLayout title={weddingsPage.meta.title} description={weddingsPage.meta.description}>
+  <PageIntro kicker="Weddings & events" title={weddingsPage.headline} line={weddingsPage.line} tone="cream">
+    <div slot="actions" class="intro-actions">
+      <a class="btn btn-rose" href="#enquire">Start with a chat</a>
+      <a class="btn btn-line" href={wa} target="_blank" rel="noopener">WhatsApp us</a>
+    </div>
+    <PhotoPlaceholder label="A bride holding her hand-tied bouquet" note="Portrait, arched crop · about 1400×2000" ratio="3 / 4" shape="arch" tone="blush" class="arch-ph" />
+  </PageIntro>
+
+  <section class="services" aria-labelledby="services-h">
+    <div class="wrap services-grid">
+      <div class="services-head">
+        <p class="kicker" data-reveal>What we do</p>
+        <h2 id="services-h" class="title" data-reveal>Every flower, from the first bouquet to the last table.</h2>
+      </div>
+      <ol class="service-list">
+        {weddingsPage.services.map((s, i) => (
+          <li data-reveal>
+            <span class="s-num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+            <div>
+              <h3>{s.title}</h3>
+              <p>{s.text}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <section class="process" aria-labelledby="process-h">
+    <div class="wrap">
+      <h2 id="process-h" class="title" data-reveal>How it works</h2>
+      <ol class="process-list">
+        {weddingsPage.process.map((p, i) => (
+          <li data-reveal data-reveal-delay={i * 0.08}>
+            <span class="p-dot" aria-hidden="true"></span>
+            <h3><span class="sr-only">Step {i + 1}: </span>{p.title}</h3>
+            <p>{p.text}</p>
+          </li>
+        ))}
+      </ol>
+      <p class="pricing" data-reveal>{weddingsPage.pricing}</p>
+    </div>
+  </section>
+
+  <section class="samples" aria-labelledby="samples-h">
+    <div class="wrap">
+      <h2 id="samples-h" class="title" data-reveal>Recent work <span class="placeholder-tag tag">Sample projects</span></h2>
+      <div class="sample-grid">
+        {weddingsPage.samples.map((s, i) => (
+          <figure class:list={['sample', `s${i + 1}`]} data-reveal>
+            <PhotoPlaceholder label={s.note.replace('Photo: ', '')} ratio={['4 / 5', '3 / 2', '1 / 1'][i]} tone={(['blush', 'paper', 'sage'] as const)[i]} />
+            <figcaption>{s.title}</figcaption>
+          </figure>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section id="enquire" class="enquire" aria-labelledby="enquire-h">
+    <div class="wrap enquire-grid">
+      <div>
+        <h2 id="enquire-h" class="title" data-reveal>Tell us about your day.</h2>
+        <p class="lead" data-reveal>Share a few details and we’ll reply within [time] with ideas and a clear quote. No pressure, no obligation.</p>
+        <p class="direct" data-reveal>
+          Or talk to us now: <a href={wa} target="_blank" rel="noopener">WhatsApp</a> · <a href={business.contact.phoneHref}>{business.contact.phoneDisplay}</a>
+        </p>
+      </div>
+      <form class="form" action={business.formspreeEndpoint} method="POST" data-formspree data-success="Thank you! We’ll be in touch within [time] with ideas for your day.">
+        <input type="hidden" name="_subject" value="Wedding / event enquiry — Petal & Stem" />
+        <div class="two">
+          <div class="field"><label for="w-name">Your names</label><input id="w-name" name="name" autocomplete="name" required /></div>
+          <div class="field"><label for="w-date">Date</label><input id="w-date" name="date" type="date" /></div>
+        </div>
+        <div class="two">
+          <div class="field"><label for="w-email">Email</label><input id="w-email" name="email" type="email" autocomplete="email" required /></div>
+          <div class="field"><label for="w-phone">Phone or WhatsApp</label><input id="w-phone" name="phone" type="tel" autocomplete="tel" /></div>
+        </div>
+        <div class="two">
+          <div class="field">
+            <label for="w-type">Occasion</label>
+            <select id="w-type" name="occasion">
+              <option>Wedding</option><option>Engagement / homecoming</option><option>Corporate event</option><option>Party or dinner</option><option>Something else</option>
+            </select>
+          </div>
+          <div class="field"><label for="w-venue">Venue</label><input id="w-venue" name="venue" /></div>
+        </div>
+        <div class="field">
+          <label for="w-msg">How should the day feel?</label>
+          <textarea id="w-msg" name="message" placeholder="Colours, flowers you love, guest numbers, anything at all."></textarea>
+        </div>
+        <button class="btn btn-rose" type="submit">Send enquiry</button>
+        <p class="status" data-form-status role="status"></p>
+      </form>
+    </div>
+  </section>
+
+  <PageCta title="Planning something smaller?" line="Same-day bouquets for every feeling, delivered in [Kandy]." waText={whatsapp.wedding} />
+</BaseLayout>
+
+<style>
+  .intro-actions { margin-top: 1.6rem; display: flex; flex-wrap: wrap; gap: 0.7rem; }
+  :global(.arch-ph) { max-width: 380px; margin-left: auto; }
+  .title { font-size: var(--text-title); line-height: var(--text-title--line-height); }
+  .services { background: var(--color-blush-50); padding-block: var(--spacing-section); }
+  .services-grid { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.3fr); gap: clamp(2rem, 6vw, 6rem); }
+  .services-head { position: sticky; top: calc(var(--header-h) + 2rem); align-self: start; }
+  .services-head .title { margin-top: 0.6rem; }
+  .service-list li { display: grid; grid-template-columns: auto 1fr; gap: 1.4rem; padding-block: 1.5rem; border-bottom: 1px solid var(--color-blush-deep); }
+  .service-list li:nth-child(even) { padding-left: clamp(0rem, 5vw, 4rem); }
+  .s-num { font-family: var(--font-display); font-style: italic; font-size: clamp(2rem, 4vw, 3.4rem); line-height: 1; color: var(--color-petal); }
+  .service-list h3 { font-size: clamp(1.4rem, 2.2vw, 1.9rem); }
+  .service-list p { margin-top: 0.3rem; color: var(--color-ink-soft); }
+
+  .process { background: var(--color-stem-deep); color: var(--color-cream); padding-block: var(--spacing-section); }
+  .process .title { color: var(--color-cream); }
+  .process-list { margin-top: 3rem; display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem; position: relative; }
+  .process-list::before { content: ''; position: absolute; left: 0; right: 0; top: 9px; height: 2px; background: var(--color-sage); opacity: 0.5; }
+  .process-list li { position: relative; padding-top: 2.4rem; }
+  .p-dot { position: absolute; top: 0; left: 0; width: 20px; height: 20px; border-radius: 50% 0 50% 50%; rotate: -45deg; background: var(--color-petal); }
+  .process-list h3 { font-size: 1.6rem; color: var(--color-gold-soft); }
+  .process-list p { margin-top: 0.4rem; color: var(--color-sage); }
+  .pricing { margin-top: 3rem; font-family: var(--font-display); font-style: italic; font-size: clamp(1.3rem, 2vw, 1.7rem); color: var(--color-cream); }
+
+  .samples { background: var(--color-cream); padding-block: var(--spacing-section); }
+  .tag { display: inline-block; vertical-align: middle; margin-left: 0.6rem; padding: 0.25rem 0.6rem; border-radius: 6px; background: var(--color-blush); color: var(--color-rose-deep); font-size: 0.7rem; }
+  .sample-grid { margin-top: 2.5rem; display: grid; grid-template-columns: repeat(12, 1fr); gap: clamp(1rem, 2.5vw, 2rem); align-items: start; }
+  .s1 { grid-column: 1 / 6; }
+  .s2 { grid-column: 6 / 13; margin-top: 4rem; }
+  .s3 { grid-column: 3 / 8; margin-top: -2rem; }
+  .sample figcaption { margin-top: 0.7rem; font-size: 0.92rem; color: var(--color-ink-soft); }
+
+  .enquire { background: var(--color-blush-50); padding-block: var(--spacing-section); }
+  .enquire-grid { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.2fr); gap: clamp(2rem, 6vw, 6rem); }
+  .lead { margin-top: 1rem; font-size: var(--text-lead); color: var(--color-ink-soft); }
+  .direct { margin-top: 1.4rem; }
+  .direct a { color: var(--color-rose); font-weight: 600; display: inline-block; padding-block: 0.6rem; }
+  .form { display: grid; gap: 1rem; justify-items: start; }
+  .form .field, .form .two { width: 100%; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .status { min-height: 1.4em; font-weight: 600; color: var(--color-stem-deep); }
+
+  @media (max-width: 860px) {
+    :global(.arch-ph) { max-width: 300px; margin: 1.5rem auto 0 0; }
+    .services-grid, .enquire-grid { grid-template-columns: 1fr; }
+    .services-head { position: static; }
+    .service-list li:nth-child(even) { padding-left: 0; }
+    .process-list { grid-template-columns: 1fr 1fr; gap: 2rem 1.2rem; }
+    .process-list::before { display: none; }
+    .sample-grid { grid-template-columns: 1fr 1fr; }
+    .s1 { grid-column: 1; }
+    .s2 { grid-column: 1 / -1; grid-row: 2; margin-top: 0; }
+    .s3 { grid-column: 2; grid-row: 1; margin-top: 2rem; }
+    .two { grid-template-columns: 1fr; }
+  }
+</style>

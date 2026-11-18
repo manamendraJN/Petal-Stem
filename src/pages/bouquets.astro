@@ -1,0 +1,160 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageIntro from '../components/PageIntro.astro';
+import PhotoPlaceholder from '../components/PhotoPlaceholder.astro';
+import PageCta from '../components/PageCta.astro';
+import { bouquetsPage, feelings, sizes, sampleReviews } from '../content/site';
+const tones = ['blush', 'paper', 'blush', 'paper', 'sage'] as const;
+---
+
+<BaseLayout title={bouquetsPage.meta.title} description={bouquetsPage.meta.description}>
+  <PageIntro kicker="Bouquets" title={bouquetsPage.headline} line={bouquetsPage.line} tone="blush">
+    <nav class="feel-index" aria-label="Jump to a feeling">
+      <p class="hand fi-label">What do you want to say?</p>
+      <ul>
+        {feelings.map((f) => (
+          <li>
+            <a href={`#${f.id}`}>
+              <span>{f.label}</span>
+              <svg width="18" height="12" viewBox="0 0 18 12" aria-hidden="true"><path d="M1 6h15m-5-5 5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  </PageIntro>
+
+  <section class="delivery" aria-label="Delivery">
+    <ul class="wrap delivery-list">
+      {bouquetsPage.delivery.map((d) => (
+        <li data-reveal>
+          <strong>{d.title}</strong>
+          <span>{d.text}</span>
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  {
+    feelings.map((f, fi) => (
+      <section id={f.id} class:list={['feeling', fi % 2 ? 'alt' : '']} aria-labelledby={`h-${f.id}`}>
+        <div class="wrap feeling-grid">
+          <div class="feeling-side">
+            <h2 id={`h-${f.id}`} class="feeling-h" data-reveal>{f.label}</h2>
+            <p class="feeling-line" data-reveal>{f.line}</p>
+            <figure class="example-note" data-reveal>
+              <p class="hand">“{f.cardMessage}”</p>
+              <figcaption class="placeholder-tag">Example note</figcaption>
+            </figure>
+            <a class="btn btn-rose" href={`/order?feeling=${f.id}`} data-reveal>
+              Order a {f.label.toLowerCase()} bouquet
+            </a>
+          </div>
+          <div class="feeling-bouquets">
+            {f.bouquets.map((b, bi) => (
+              <article class="bq" data-reveal data-reveal-delay={bi * 0.1}>
+                <PhotoPlaceholder label={`${b.name} bouquet`} note={b.photoNote.replace('Photo: ', '')} ratio="4 / 5" tone={tones[(fi + bi) % tones.length]} sizes="(max-width: 860px) 50vw, 30vw" />
+                <h3 class="bq-name">{b.name}</h3>
+                <p class="bq-desc">{b.description}</p>
+                <p class="bq-flowers">{b.flowers}</p>
+                <ul class="bq-sizes">
+                  {sizes.map((s) => (
+                    <li>
+                      <span>{s.label}</span>
+                      <span>{s.price}</span>
+                    </li>
+                  ))}
+                </ul>
+                <a class="link-arrow" href={`/order?feeling=${f.id}&bouquet=${b.id}`} aria-label={`Order ${b.name}`}>
+                  Order this
+                  <svg width="18" height="12" viewBox="0 0 18 12" aria-hidden="true"><path d="M1 6h15m-5-5 5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                </a>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+    ))
+  }
+
+  <section class="reviews" aria-labelledby="reviews-h">
+    <div class="wrap reviews-grid">
+      <h2 id="reviews-h" class="reviews-h" data-reveal>What people say</h2>
+      {sampleReviews.map((r) => (
+        <figure class="review" data-reveal>
+          <blockquote>{r.quote}</blockquote>
+          <figcaption><span class="placeholder-tag">Sample</span> {r.name}</figcaption>
+        </figure>
+      ))}
+    </div>
+  </section>
+
+  <PageCta />
+</BaseLayout>
+
+<style>
+  .feel-index { padding: 1.4rem 1.5rem; border-radius: var(--radius-card); background: var(--color-blush-50); }
+  .fi-label { font-size: 1.5rem; color: var(--color-rose); }
+  .feel-index ul { margin-top: 0.4rem; display: grid; }
+  .feel-index a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 48px;
+    border-bottom: 1px solid var(--color-blush-deep);
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: clamp(1.3rem, 2vw, 1.7rem);
+    color: var(--color-rose-deep);
+    text-decoration: none;
+  }
+  .feel-index li:last-child a { border-bottom: 0; }
+  .feel-index a svg { transition: transform 0.3s var(--ease-petal); }
+  .feel-index a:hover svg { transform: translateX(5px); }
+
+  .delivery { background: var(--color-stem-deep); color: var(--color-cream); }
+  .delivery-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; padding-block: 1.6rem; }
+  .delivery-list li { display: grid; gap: 0.15rem; }
+  .delivery-list strong { font-family: var(--font-display); font-weight: 400; font-size: 1.25rem; color: var(--color-gold-soft); }
+  .delivery-list span { font-size: 0.95rem; color: var(--color-sage); }
+
+  .feeling { background: var(--color-cream); padding-block: clamp(4rem, 8vw, 7rem); }
+  .feeling.alt { background: var(--color-blush-50); }
+  .feeling-grid { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.4fr); gap: clamp(2rem, 5vw, 5rem); align-items: start; }
+  .feeling-side { position: sticky; top: calc(var(--header-h) + 2rem); display: grid; gap: 1.2rem; justify-items: start; }
+  .feeling-h { font-size: clamp(2.6rem, 4.4vw, 4.6rem); line-height: 0.95; font-style: italic; font-weight: 320; color: var(--color-rose-deep); }
+  .feeling-line { font-size: var(--text-lead); color: var(--color-ink-soft); max-width: 26rem; }
+  .example-note { padding: 1.1rem 1.3rem; background: var(--color-ivory); box-shadow: var(--shadow-paper); border-radius: 3px; rotate: -1.5deg; max-width: 24rem; }
+  .example-note p { font-size: 1.55rem; line-height: 1.2; color: var(--color-ink); }
+  .example-note figcaption { margin-top: 0.4rem; color: var(--color-ink-soft); }
+
+  .feeling-bouquets { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(1rem, 2.5vw, 2rem); }
+  .bq:nth-child(2) { margin-top: clamp(2rem, 6vw, 5rem); }
+  .bq-name { margin-top: 1rem; font-size: clamp(1.4rem, 2vw, 1.8rem); }
+  .bq-desc { margin-top: 0.4rem; color: var(--color-ink-soft); }
+  .bq-flowers { margin-top: 0.5rem; font-size: 0.85rem; letter-spacing: 0.02em; color: var(--color-stem-deep); }
+  .bq-sizes { margin-top: 0.9rem; border-top: 1px solid var(--color-blush-deep); }
+  .bq-sizes li { display: flex; justify-content: space-between; gap: 1rem; padding-block: 0.45rem; border-bottom: 1px solid var(--color-blush-deep); font-size: 0.93rem; }
+  .bq-sizes li span:last-child { font-weight: 600; }
+
+  .reviews { background: var(--color-cream); padding-block: clamp(4rem, 8vw, 6rem) clamp(5rem, 9vw, 8rem); }
+  .reviews-grid { display: grid; grid-template-columns: 0.8fr 1fr 1fr; gap: 2rem; align-items: start; }
+  .reviews-h { font-size: var(--text-title); line-height: 1; }
+  .review blockquote { font-family: var(--font-display); font-size: clamp(1.25rem, 1.8vw, 1.6rem); line-height: 1.3; font-style: italic; }
+  .review figcaption { margin-top: 0.8rem; color: var(--color-ink-soft); font-size: 0.9rem; display: flex; gap: 0.6rem; align-items: center; }
+  .review .placeholder-tag { padding: 0.15rem 0.45rem; border-radius: 4px; background: var(--color-blush); color: var(--color-rose-deep); }
+
+  @media (max-width: 860px) {
+    .delivery-list { grid-template-columns: 1fr; gap: 0.9rem; }
+    .feeling-grid { grid-template-columns: 1fr; }
+    .feeling-side { position: static; }
+    .feeling-h { font-size: clamp(2.6rem, 12vw, 3.6rem); }
+    .feeling-bouquets { gap: 1rem 0.8rem; }
+    .bq:nth-child(2) { margin-top: 0; }
+    .bq-desc { display: none; }
+    .bq-name { font-size: 1.2rem; margin-top: 0.7rem; }
+    .bq-flowers { font-size: 0.78rem; }
+    .bq-sizes li { font-size: 0.82rem; flex-direction: column; gap: 0; }
+    .reviews-grid { grid-template-columns: 1fr; }
+  }
+</style>

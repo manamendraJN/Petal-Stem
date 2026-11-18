@@ -1,0 +1,122 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageIntro from '../components/PageIntro.astro';
+import { contactPage, business, whatsapp } from '../content/site';
+const wa = `https://wa.me/${business.contact.whatsappNumber}?text=${encodeURIComponent(whatsapp.general)}`;
+---
+
+<BaseLayout title={contactPage.meta.title} description={contactPage.meta.description}>
+  <PageIntro kicker="Contact" title={contactPage.headline} line={contactPage.line} tone="blush">
+    <ul class="direct">
+      <li>
+        <a href={wa} target="_blank" rel="noopener">
+          <span class="d-label">WhatsApp</span>
+          <span class="d-value">{business.contact.whatsappDisplay}</span>
+        </a>
+      </li>
+      <li>
+        <a href={business.contact.phoneHref}>
+          <span class="d-label">Call</span>
+          <span class="d-value">{business.contact.phoneDisplay}</span>
+        </a>
+      </li>
+      <li>
+        <a href={business.contact.emailHref}>
+          <span class="d-label">Email</span>
+          <span class="d-value">{business.contact.email}</span>
+        </a>
+      </li>
+    </ul>
+  </PageIntro>
+
+  <section class="contact" aria-labelledby="form-h">
+    <div class="wrap contact-grid">
+      <form class="form" action={business.formspreeEndpoint} method="POST" data-formspree data-success={contactPage.sent}>
+        <h2 id="form-h" class="title">Send a message</h2>
+        <input type="hidden" name="_subject" value="New message — Petal & Stem website" />
+        <div class="field"><label for="c-name">Your name</label><input id="c-name" name="name" autocomplete="name" required /></div>
+        <div class="field">
+          <label for="c-contact">Email or phone</label>
+          <input id="c-contact" name="contact" autocomplete="email" required />
+          <span class="hint">So we can reply. We never share it.</span>
+        </div>
+        <div class="field">
+          <label for="c-about">About</label>
+          <select id="c-about" name="about">
+            <option>A bouquet for today</option>
+            <option>A wedding or event</option>
+            <option>Weekly subscription</option>
+            <option>Something else</option>
+          </select>
+        </div>
+        <div class="field"><label for="c-msg">Message</label><textarea id="c-msg" name="message" required></textarea></div>
+        <button class="btn btn-rose" type="submit">Send message</button>
+        <p class="status" data-form-status role="status"></p>
+      </form>
+
+      <div class="visit">
+        <div class="visit-card" data-reveal>
+          <h2 class="visit-h">Visit the shop</h2>
+          <dl>
+            <div><dt>Address</dt><dd>{business.contact.address}</dd></div>
+            <div><dt>Shop hours</dt><dd>{business.contact.shopHours}</dd></div>
+            <div><dt>Delivery hours</dt><dd>{business.contact.deliveryHours}</dd></div>
+            <div><dt>Same-day cut-off</dt><dd>{business.contact.sameDayCutoff}</dd></div>
+          </dl>
+        </div>
+        <div class="map" role="img" aria-label="Map placeholder: shop location in [Kandy]" data-reveal>
+          <span class="placeholder-tag">Map placeholder</span>
+          <span>Embed your map here, e.g. a Google Maps iframe for [Shop address].</span>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .direct { display: grid; gap: 0.6rem; }
+  .direct a {
+    display: grid;
+    gap: 0.1rem;
+    padding: 1rem 1.2rem;
+    border-radius: var(--radius-card);
+    background: var(--color-blush-50);
+    text-decoration: none;
+    color: var(--color-ink);
+    transition: transform 0.35s var(--ease-petal), background-color 0.2s;
+  }
+  .direct a:hover { transform: translateX(4px); background: var(--color-ivory); }
+  .d-label { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--color-rose); }
+  .d-value { font-family: var(--font-display); font-size: clamp(1.15rem, 1.8vw, 1.45rem); }
+
+  .contact { background: var(--color-cream); padding-block: clamp(3rem, 7vw, 6rem) var(--spacing-section); }
+  .contact-grid { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: clamp(2rem, 6vw, 6rem); align-items: start; }
+  .title { font-size: var(--text-title); line-height: 1; margin-bottom: 0.4rem; }
+  .form { display: grid; gap: 1rem; justify-items: start; }
+  .form .field { width: 100%; }
+  .status { min-height: 1.4em; font-weight: 600; color: var(--color-stem-deep); }
+  .visit { display: grid; gap: 1.2rem; }
+  .visit-card { padding: 1.6rem; border-radius: var(--radius-card); background: var(--color-stem-deep); color: var(--color-cream); }
+  .visit-h { font-size: 1.8rem; color: var(--color-gold-soft); }
+  .visit-card dl { margin-top: 1rem; display: grid; gap: 0.8rem; }
+  .visit-card dt { font-size: 0.75rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--color-sage); }
+  .visit-card dd { margin-top: 0.1rem; }
+  .map {
+    aspect-ratio: 4 / 3;
+    border-radius: var(--radius-card);
+    padding: 1.2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: 0.3rem;
+    background-color: var(--color-paper);
+    background-image: repeating-linear-gradient(135deg, transparent 0 14px, rgb(108 26 49 / 0.05) 14px 15px);
+    outline: 1.5px dashed rgb(108 26 49 / 0.35);
+    outline-offset: -10px;
+    color: var(--color-rose-deep);
+    font-size: 0.92rem;
+  }
+  @media (max-width: 860px) {
+    .contact-grid { grid-template-columns: 1fr; }
+  }
+</style>
