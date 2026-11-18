@@ -20,6 +20,8 @@ Node 22+ recommended. Stack: Astro 7 (static), TypeScript, Tailwind CSS 4, GSAP 
 
 ## Deploy (Cloudflare Pages)
 
+Step-by-step instructions: **[DEPLOY.md](DEPLOY.md)**. Quick reference:
+
 - Build command: `npm run build`
 - Output directory: `dist`
 - `public/_headers` sets long caching for hashed assets.
