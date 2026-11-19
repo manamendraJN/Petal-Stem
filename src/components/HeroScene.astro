@@ -556,6 +556,23 @@ const petals = [
   :global(html.motion) .picker { opacity: 0; }
   :global(html.motion) .hero:not(.is-turn) .picker { pointer-events: none; }
 
+  /* ─────── Performance: give every element GSAP moves its own GPU layer ───────
+     Without these, each animated child (idle sway, scroll scrub, mouse parallax)
+     repaints its parent layer every frame — re-running the SVG/CSS blurs on the
+     shelves, window, ribbon and petals. Promoted, they're moved by the compositor. */
+  :global(html.motion) .hero-sink,
+  :global(html.motion) .word-float,
+  :global(html.motion) .petal-float,
+  :global(html.motion) .ribbon { will-change: transform; }
+  :global(html.motion) .hook,
+  :global(html.motion) .turn,
+  :global(html.motion) .picker,
+  :global(html.motion) .scroll-hint { will-change: transform, opacity; }
+  /* mouse parallax (fine pointers only, matching the JS) moves .depth-inner */
+  @media (pointer: fine) {
+    :global(html.motion) .depth-inner { will-change: transform; }
+  }
+
   /* ─────── Still version (reduced motion / no JS): everything visible, in order ─────── */
   :global(html:not(.motion)) .scroll-hint,
   :global(html:not(.motion)) .burst { display: none; }

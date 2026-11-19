@@ -72,6 +72,15 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
     -webkit-backdrop-filter: blur(10px);
     box-shadow: 0 1px 0 rgb(108 26 49 / 0.08);
   }
+  /* Phones: a live backdrop blur over the animating hero is re-computed every frame.
+     The bar is 90% opaque anyway, so a slightly more opaque fill looks the same. */
+  @media (hover: none) and (pointer: coarse) {
+    .site-header:global(.is-scrolled) {
+      background: rgb(248 241 229 / 0.96);
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+    }
+  }
   .bar {
     height: 100%;
     display: flex;
