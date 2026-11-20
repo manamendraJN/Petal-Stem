@@ -43,8 +43,8 @@ export const business = {
   },
   studio: {
     name: 'Depthwyn',
-    /** Replace with your Depthwyn website address. */
-    url: 'https://depthwyn.example/',
+    /** Depthwyn's main website (linked from the footer's concept-project note). */
+    url: 'https://business-site.depthwyn.workers.dev/',
   },
   /** Used for canonical URLs and the social preview. Replace when deployed. */
   siteUrl: 'https://petal-and-stem.example',
