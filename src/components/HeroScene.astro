@@ -523,6 +523,9 @@ const petals = [
     font-size: 1.4rem;
     color: var(--color-cream);
   }
+  /* Decorative only: once faded it sits over the feeling tags on phones, so it must never take taps.
+     (Written as .hero-ui > … to outrank the `.hero-ui > *` rule above.) */
+  .hero-ui > .scroll-hint { pointer-events: none; }
   .scroll-stem { width: 2px; height: 34px; background: var(--color-cream); border-radius: 2px; opacity: 0.8; }
 
   /* ─────── Phone composition ─────── */
