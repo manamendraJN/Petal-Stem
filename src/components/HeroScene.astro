@@ -558,6 +558,10 @@ const petals = [
   :global(html.motion) .turn,
   :global(html.motion) .picker { opacity: 0; }
   :global(html.motion) .hero:not(.is-turn) .picker { pointer-events: none; }
+  /* The bouquet's markup is its fully grown (still) state. In motion mode it must stay hidden
+     until the script has shrunk every stem to zero, or it flashes in full on first paint.
+     motion.ts adds .motion-ready after the scenes are built; GSAP then shows the active bouquet. */
+  :global(html.motion:not(.motion-ready)) .bq { visibility: hidden; }
 
   /* ─────── Performance: give every element GSAP moves its own GPU layer ───────
      Without these, each animated child (idle sway, scroll scrub, mouse parallax)
